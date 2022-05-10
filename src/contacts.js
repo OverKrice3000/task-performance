@@ -1,21 +1,48 @@
 const contacts = document.getElementsByClassName("contacts")[0];
 const stickyHeader = document.getElementsByClassName("stickyHeader")[0];
+const items = []
+const fragment = document.createDocumentFragment();
 
-function addContacts() {
-  const fragment = document.createDocumentFragment();
-  for (let i = 0; i < 50000; i++) {
-    const child = document.createElement("div");
-    child.textContent = i;
-    child.classList.add("contact");
-    fragment.appendChild(child);
+
+const max_contracts = 50000
+const iter_contracts = 1000
+const thr_contracts = 750
+let current_contracts = 0
+
+contacts.addEventListener("scroll", (e) => {
+  let topItemIndex;
+  // Если предикат от старого индекса все еще выполняется - мы пролистали вверх
+  // Иначе - вниз
+  if(topItemIndexPredicate(items[oldItemStickyIndex]))
+    topItemIndex = findLowerBorder(oldItemStickyIndex);
+  else
+    topItemIndex = findUpperBorder(oldItemStickyIndex);
+  //const topItemIndex = items.findIndex(topItemIndexPredicate);
+  if (topItemIndex !== -1) {
+    // Обновление индекса
+    oldItemStickyIndex = topItemIndex;
+    stickyHeader.textContent = items[topItemIndex].textContent;
   }
-  contacts.appendChild(fragment);
-  // Эта функция теперь возвращает список контактов, который сохраняется в константу
-  return Array.from(contacts.getElementsByClassName("contact"));
+  if(topItemIndex >= current_contracts - iter_contracts + thr_contracts && current_contracts !== max_contracts)
+    addNextContacts()
+});
+
+// Теперь эта функция загружает контракты частями если пользователь пролистал почти до конца
+function addNextContacts() {
+  console.log("HERE")
+    for (let i = current_contracts; i < current_contracts + iter_contracts; i++) {
+      const child = document.createElement("div");
+      child.textContent = i;
+      child.classList.add("contact");
+      items.push(child)
+      contacts.appendChild(child);
+    }
+    current_contracts += iter_contracts
 }
 
+addNextContacts();
 // Список контактов
-const items = addContacts();
+
 // Вынес предикат в переменную
 const topItemIndexPredicate = (item) => contacts.scrollTop - item.offsetTop <= -18;
 // Обновляющийся индекс предыдущего контакта в sticky header
@@ -36,20 +63,6 @@ function findUpperBorder(current){
   return current;
 }
 
-contacts.addEventListener("scroll", (e) => {
-  let topItemIndex;
-  // Если предикат от старого индекса все еще выполняется - мы пролистали вверх
-  // Иначе - вниз
-  if(topItemIndexPredicate(items[oldItemStickyIndex]))
-    topItemIndex = findLowerBorder(oldItemStickyIndex);
-  else
-    topItemIndex = findUpperBorder(oldItemStickyIndex);
-  //const topItemIndex = items.findIndex(topItemIndexPredicate);
-  if (topItemIndex !== -1) {
-      // Обновление индекса
-      oldItemStickyIndex = topItemIndex;
-      stickyHeader.textContent = items[topItemIndex].textContent;
-  }
-});
+
 
 
