@@ -29,7 +29,6 @@ contacts.addEventListener("scroll", (e) => {
 
 // Теперь эта функция загружает контракты частями если пользователь пролистал почти до конца
 function addNextContacts() {
-  console.log("HERE")
     for (let i = current_contracts; i < current_contracts + iter_contracts; i++) {
       const child = document.createElement("div");
       child.textContent = i;
